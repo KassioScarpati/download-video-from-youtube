@@ -51,9 +51,27 @@ Para baixar em resoluções mais altas (1080p, 1440p, 4K), o YouTube entrega ví
 
 1. Instale o ffmpeg:
 
+**Linux (Debian/Ubuntu):**
+
 ```bash
 sudo apt install ffmpeg
 ```
+
+**Windows:**
+
+A forma mais rápida é usar o [winget](https://learn.microsoft.com/pt-br/windows/package-manager/winget/) (já vem no Windows 10/11). Abra o PowerShell e rode:
+
+```powershell
+winget install ffmpeg
+```
+
+Depois feche e abra o terminal novamente para o `ffmpeg` ficar disponível no `PATH`. Para conferir, rode:
+
+```powershell
+ffmpeg -version
+```
+
+> Se preferir, você também pode usar o [Chocolatey](https://chocolatey.org/) (`choco install ffmpeg`) ou baixar o binário manualmente em [ffmpeg.org/download.html](https://ffmpeg.org/download.html) e adicionar a pasta `bin` ao `PATH`.
 
 2. No arquivo `download.js`, mude a variável:
 

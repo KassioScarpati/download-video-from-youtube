@@ -7,7 +7,6 @@ const { constants } = require("youtube-dl-exec");
 // Cole aqui o link do vídeo do YouTube que deseja baixar.
 // ==========================================================
 const videoUrl = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
-// const videoUrl = "https://www.youtube.com/watch?v=yVlxamBuj4M";
 
 // Pasta onde os vídeos serão salvos.
 const outputDir = path.join(__dirname, "downloads");
