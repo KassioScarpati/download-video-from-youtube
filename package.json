@@ -1,0 +1,13 @@
+{
+  "name": "download-video-from-youtube",
+  "version": "2.0.0",
+  "description": "Script Node.js que baixa um vídeo do YouTube a partir de um link salvo em uma variável (usa yt-dlp).",
+  "type": "commonjs",
+  "main": "download.js",
+  "scripts": {
+    "start": "node download.js"
+  },
+  "dependencies": {
+    "youtube-dl-exec": "^3.0.28"
+  }
+}
