@@ -79,6 +79,20 @@ ffmpeg -version
 const usarFfmpeg = true;
 ```
 
+## Baixar apenas o áudio (mp3)
+
+O YouTube guarda vídeo e áudio separadamente, então o `mp4` é apenas o formato que o script monta — dá pra baixar somente o áudio e convertê-lo em `mp3`.
+
+Para isso, no arquivo `download.js`, mude a variável:
+
+```js
+const formato = "mp3"; // "mp4" (padrão) ou "mp3"
+```
+
+Com `formato = "mp3"`, o script baixa apenas a faixa de áudio na melhor qualidade e a converte para `mp3`.
+
+> A conversão para mp3 **exige o `ffmpeg` instalado** (veja a seção acima). A variável `usarFfmpeg` é ignorada nesse modo, pois o `ffmpeg` é sempre necessário.
+
 ## Observações
 
 - Baixe apenas conteúdos que você tem permissão para baixar, respeitando os Termos de Serviço do YouTube.
