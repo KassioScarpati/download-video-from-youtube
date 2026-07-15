@@ -58,34 +58,64 @@ npm install
 
 ## Como usar
 
-1. Abra o arquivo `download.js`.
-2. Altere o valor da variável `videoUrl` para o link do vídeo que deseja baixar:
+Você passa o link do vídeo (e opcionalmente uma flag de qualidade/formato) direto na linha de comando — não precisa editar o código.
 
-```js
-const videoUrl = "https://www.youtube.com/watch?v=SEU_VIDEO_AQUI";
-```
-
-3. Execute o script:
-
-```bash
-npm start
-```
-
-ou
+**Baixar o vídeo padrão em qualidade normal:**
 
 ```bash
 node download.js
 ```
 
+**Baixar um vídeo específico em qualidade normal:**
+
+```bash
+node download.js "https://www.youtube.com/watch?v=SEU_VIDEO_AQUI"
+```
+
+> Coloque a URL entre aspas para evitar problemas com caracteres especiais (como `&`) no terminal.
+
 O vídeo será salvo na pasta `downloads/` com o título do vídeo como nome do arquivo.
 
-## Baixar em alta qualidade (1080p ou mais)
+### Flags disponíveis
 
-Por padrão, o script baixa o melhor arquivo único que já contém **vídeo + áudio juntos** (geralmente até 720p), pois isso não exige o `ffmpeg`.
+| Flag | O que faz | Precisa de ffmpeg? |
+|------|-----------|--------------------|
+| _(nenhuma)_ | Vídeo em qualidade padrão (arquivo único, até ~720p) | Não |
+| `--4k` | Melhor qualidade disponível (1080p, 1440p, 4K), juntando vídeo + áudio | Sim |
+| `--mp3` | Baixa apenas o áudio e converte para `mp3` | Sim |
 
-Para baixar em resoluções mais altas (1080p, 1440p, 4K), o YouTube entrega vídeo e áudio em arquivos separados, e é necessário o `ffmpeg` para juntá-los:
+A flag pode vir antes ou depois da URL do YouTube:
 
-1. Instale o ffmpeg:
+```bash
+node download.js "https://www.youtube.com/watch?v=SEU_VIDEO_AQUI" --4k
+node download.js --4k "https://www.youtube.com/watch?v=SEU_VIDEO_AQUI"
+
+node download.js "https://www.youtube.com/watch?v=SEU_VIDEO_AQUI" --mp3
+node download.js --mp3 "https://www.youtube.com/watch?v=SEU_VIDEO_AQUI"
+```
+
+> **Atenção:** a flag precisa vir **depois** de `download.js`. Não use `node --4k download.js ...`, pois o Node interpreta a flag como opção dele e o comando falha.
+
+Para ver um resumo das opções, use `--help`:
+
+```bash
+node download.js --help
+```
+
+Você também pode rodar o vídeo padrão com `npm start`. Para passar argumentos via npm, use `--` como separador:
+
+```bash
+npm start -- "https://www.youtube.com/watch?v=SEU_VIDEO_AQUI" --4k
+```
+
+## Alta qualidade (`--4k`) e mp3 (`--mp3`) exigem o ffmpeg
+
+As flags `--4k` e `--mp3` precisam do `ffmpeg` instalado:
+
+- **`--4k`**: por padrão o YouTube entrega o vídeo em qualidade alta com vídeo e áudio em arquivos separados, e o `ffmpeg` é quem os junta.
+- **`--mp3`**: o `ffmpeg` é quem converte a faixa de áudio para `mp3`.
+
+Se você usar essas flags sem o `ffmpeg` instalado, o download falha. Para instalá-lo:
 
 **Linux (Debian/Ubuntu):**
 
@@ -109,25 +139,24 @@ ffmpeg -version
 
 > Se preferir, você também pode usar o [Chocolatey](https://chocolatey.org/) (`choco install ffmpeg`) ou baixar o binário manualmente em [ffmpeg.org/download.html](https://ffmpeg.org/download.html) e adicionar a pasta `bin` ao `PATH`.
 
-2. No arquivo `download.js`, mude a variável:
+Com o `ffmpeg` instalado, é só usar as flags:
 
-```js
-const usarFfmpeg = true;
+```bash
+node download.js "https://www.youtube.com/watch?v=SEU_VIDEO_AQUI" --4k
+node download.js "https://www.youtube.com/watch?v=SEU_VIDEO_AQUI" --mp3
 ```
 
-## Baixar apenas o áudio (mp3)
+## Reproduzindo os vídeos (use o VLC)
 
-O YouTube guarda vídeo e áudio separadamente, então o `mp4` é apenas o formato que o script monta — dá pra baixar somente o áudio e convertê-lo em `mp3`.
+Recomendamos usar o [VLC](https://www.videolan.org/vlc/) para assistir aos vídeos baixados, principalmente os de alta qualidade (`--4k`).
 
-Para isso, no arquivo `download.js`, mude a variável:
+Nessas resoluções o YouTube entrega o vídeo em codecs modernos (como VP9 e AV1), que o player padrão do Ubuntu (GNOME Vídeos) muitas vezes **não consegue reproduzir**. O VLC já vem com os codecs necessários embutidos e abre esses arquivos sem problema.
 
-```js
-const formato = "mp3"; // "mp4" (padrão) ou "mp3"
+No Ubuntu, você pode instalar o VLC com:
+
+```bash
+sudo apt install vlc
 ```
-
-Com `formato = "mp3"`, o script baixa apenas a faixa de áudio na melhor qualidade e a converte para `mp3`.
-
-> A conversão para mp3 **exige o `ffmpeg` instalado** (veja a seção acima). A variável `usarFfmpeg` é ignorada nesse modo, pois o `ffmpeg` é sempre necessário.
 
 ## Observações
 
