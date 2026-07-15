@@ -3,22 +3,70 @@ const path = require("path");
 const { spawn } = require("child_process");
 const { constants } = require("youtube-dl-exec");
 
-// ==========================================================
-// Cole aqui o link do vídeo do YouTube que deseja baixar.
-// ==========================================================
-const videoUrl = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
+// URL usada quando nenhum link é passado na linha de comando.
+const DEFAULT_URL = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
 
 // Pasta onde os vídeos serão salvos.
 const outputDir = path.join(__dirname, "downloads");
 
-// Formato do download: "mp4" (vídeo) ou "mp3" (apenas áudio).
-const formato = "mp4";
+// ==========================================================
+// Lê os argumentos da linha de comando.
+//
+//   node download.js                      -> URL padrão, qualidade baixa
+//   node download.js <url>                -> vídeo escolhido, qualidade baixa
+//   node download.js <url> --4k           -> melhor qualidade (4K/máxima)
+//   node download.js <url> --mp3          -> apenas áudio em mp3
+//
+// As flags (--4k, --mp3) podem vir antes ou depois da URL.
+// ==========================================================
+function mostrarAjuda() {
+  console.log(`
+Uso: node download.js [url] [flag]
 
-// Se você instalar o ffmpeg (sudo apt install ffmpeg), pode trocar para true
-// e o script baixará a melhor qualidade disponível (1080p+), juntando
-// vídeo e áudio automaticamente.
-// (Ignorado quando formato = "mp3", pois o ffmpeg é sempre necessário nesse caso.)
-const usarFfmpeg = false;
+Baixa um vídeo do YouTube. Sem argumentos, baixa um vídeo de exemplo.
+A flag pode vir antes ou depois da URL.
+
+Flags:
+  (nenhuma)   Vídeo em qualidade padrão (até ~720p)
+  --4k        Melhor qualidade disponível (1080p/4K)   [requer ffmpeg]
+  --mp3       Apenas o áudio, convertido para mp3       [requer ffmpeg]
+  --help      Mostra esta ajuda
+
+Exemplos:
+  node download.js "https://youtu.be/ID"
+  node download.js "https://youtu.be/ID" --4k
+  node download.js --mp3 "https://youtu.be/ID"
+`);
+}
+
+function lerArgumentos(argv) {
+  const args = argv.slice(2);
+
+  const flags = args.filter((arg) => arg.startsWith("--"));
+  const url = args.find((arg) => !arg.startsWith("--")) || DEFAULT_URL;
+
+  if (flags.includes("--help") || flags.includes("-h")) {
+    mostrarAjuda();
+    process.exit(0);
+  }
+
+  const quer4k = flags.includes("--4k");
+  const querMp3 = flags.includes("--mp3");
+
+  // Avisa sobre flags desconhecidas, mas segue com as reconhecidas.
+  const flagsValidas = ["--4k", "--mp3", "--help", "-h"];
+  flags
+    .filter((flag) => !flagsValidas.includes(flag))
+    .forEach((flag) => console.warn(`Aviso: flag desconhecida ignorada: ${flag}`));
+
+  const formato = querMp3 ? "mp3" : "mp4";
+  // Para mp3 o ffmpeg é sempre necessário; para 4K também.
+  const usarFfmpeg = querMp3 || quer4k;
+
+  return { url, formato, usarFfmpeg };
+}
+
+const { url: videoUrl, formato, usarFfmpeg } = lerArgumentos(process.argv);
 
 function baixarVideo(url) {
   return new Promise((resolve, reject) => {
@@ -58,7 +106,14 @@ function baixarVideo(url) {
       }
     }
 
-    console.log("Iniciando download...");
+    const descricao =
+      formato === "mp3"
+        ? "áudio (mp3)"
+        : usarFfmpeg
+        ? "vídeo (melhor qualidade / 4K)"
+        : "vídeo (qualidade padrão)";
+    console.log(`Iniciando download de ${url}`);
+    console.log(`Modo: ${descricao}`);
 
     // Executamos o binário diretamente com o spawn do Node, que lida
     // corretamente com espaços no caminho (ao contrário do youtube-dl-exec).
