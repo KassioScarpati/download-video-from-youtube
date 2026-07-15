@@ -12,13 +12,13 @@ const videoUrl = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
 const outputDir = path.join(__dirname, "downloads");
 
 // Formato do download: "mp4" (vídeo) ou "mp3" (apenas áudio).
-const formato = "mp3";
+const formato = "mp4";
 
 // Se você instalar o ffmpeg (sudo apt install ffmpeg), pode trocar para true
 // e o script baixará a melhor qualidade disponível (1080p+), juntando
 // vídeo e áudio automaticamente.
 // (Ignorado quando formato = "mp3", pois o ffmpeg é sempre necessário nesse caso.)
-const usarFfmpeg = true;
+const usarFfmpeg = false;
 
 function baixarVideo(url) {
   return new Promise((resolve, reject) => {
