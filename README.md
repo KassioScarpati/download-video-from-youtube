@@ -7,8 +7,9 @@ Internamente ele usa o [`yt-dlp`](https://github.com/yt-dlp/yt-dlp) (através do
 ## Pré-requisitos
 
 - **Node.js** versão 16 ou superior.
+- **Python 3.9 ou superior**, disponível no sistema como `python3` (ou `python` no Windows).
 
-O binário do `yt-dlp` é baixado automaticamente na instalação das dependências — você não precisa instalar Python nem nada além.
+> O `Python 3` é exigido pelo pacote `youtube-dl-exec`, que faz uma verificação de versão durante o `npm install`. Sem ele, a instalação falha. Você **não** precisa instalar o `yt-dlp` manualmente: o binário é baixado automaticamente ao instalar as dependências.
 
 ## Instalação das dependências
 
@@ -19,6 +20,41 @@ npm install
 ```
 
 > Esse comando também baixa o binário do `yt-dlp`, então precisa de acesso à internet.
+
+## Configuração no Windows
+
+No Windows pode ser necessário alguns passos extras antes do `npm install` funcionar. Todos os comandos abaixo devem ser executados no **PowerShell**.
+
+1. **Liberar a execução de scripts** (resolve erros ao rodar o `npm`, que no Windows é um script `.ps1`):
+
+```powershell
+Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
+
+2. **Instalar o Python 3** (exigido pelo `youtube-dl-exec`):
+
+```powershell
+winget install python
+```
+
+Feche e reabra o PowerShell depois de instalar, para o `python` ficar disponível no `PATH`. Para conferir:
+
+```powershell
+python --version
+```
+
+3. **Instalar as dependências:**
+
+```powershell
+npm install
+```
+
+> **Se o `npm install` já tiver falhado antes** (por exemplo, por causa da política de execução ou da falta do Python), apague a pasta `node_modules` e rode o `npm install` de novo para uma instalação limpa:
+>
+> ```powershell
+> Remove-Item -Recurse -Force .\node_modules
+> npm install
+> ```
 
 ## Como usar
 
